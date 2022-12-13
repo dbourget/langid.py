@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: APP_NAME
+  labels: 
+    app: APP_NAME
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: APP_NAME
+  template: 
+    metadata:
+      labels: 
+        app: APP_NAME
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: langid
+          image: IMAGE_NAME
+          resources:
+            requests:
+              cpu: "50m"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 9008
+          ports:
+            - containerPort: 9008

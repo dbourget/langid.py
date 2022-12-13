@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: langid
+spec:
+  ports:
+  - name: http
+    port: 9008
+    protocol: TCP
+    targetPort: 9008
+  selector:
+    app: langid
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    git-commit: GIT_COMMIT
+    app: langid
+  name: langid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: langid
+  template:
+    metadata:
+      labels:
+        git-commit: GIT_COMMIT
+        app: langid
+    spec:
+      tolerations: [{"key":"dedicated","operator":"Equal","value":"staging","effect":"NoSchedule"}]
+      containers:
+      - image: cdp3136/langid:6-master-4153583
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9008
+        name: langid
+        ports:
+        - containerPort: 9008
+        resources:
+          requests:
+            cpu: 50m
+      imagePullSecrets:
+      - name: regcred
