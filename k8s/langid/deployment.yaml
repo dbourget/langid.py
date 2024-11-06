@@ -24,7 +24,7 @@ spec:
               cpu: "50m"
           livenessProbe:
             httpGet:
-              path: /
+              path: "/detect"
               port: 9008
           ports:
             - containerPort: 9008
